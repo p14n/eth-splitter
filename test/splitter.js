@@ -1,12 +1,12 @@
 var Splitter = artifacts.require("./Splitter.sol");
 
-contract('Splitter', function(accounts) {
-    it("should do nothing", function() {
-        return Splitter.deployed().then(function(instance) {
-            return true;
-        }).then(function(thing) {
-            assert.equal(true,thing, "fact not fact");
-        });
-    });
-});
+contract('Splitter', function ([alice,bob,carol]) {
+    let splitter;
+    beforeEach('setup contract for each test', async () => {
+        splitter = await Splitter.new()
+    })
+    it('has an alice', async () => {
+        assert.equal(await splitter.alice(), alice)
+    })
 
+})
