@@ -16,4 +16,11 @@ contract Splitter {
     recipient1 = firstrecipient;
     recipient2 = secondrecipient;
   }
+
+  function split() public payable {
+    require(msg.sender == owner);
+    uint val = msg.value/2;
+    recipient1.transfer(val);
+    recipient2.transfer(val);
+  }
 }
