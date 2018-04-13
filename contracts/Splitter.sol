@@ -11,6 +11,8 @@ contract Splitter {
     address secondrecipient) public {
 
     owner = msg.sender;
+    require(firstrecipient > 0);
+    require(secondrecipient > 0);
     recipient1 = firstrecipient;
     recipient2 = secondrecipient;
   }

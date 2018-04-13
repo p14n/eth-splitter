@@ -1,9 +1,10 @@
+require('chai').use(require('chai-as-promised')).should();
 var Splitter = artifacts.require("./Splitter.sol");
 
 contract('Splitter', function ([alice,bob,carol]) {
     let splitter;
     beforeEach('setup contract for each test', async () => {
-        splitter = await Splitter.new(bob,carol)
+        splitter = await Splitter.new(bob,carol, { from: alice })
     })
 
     //there are 3 people: Alice, Bob and Carol.
@@ -15,6 +16,11 @@ contract('Splitter', function ([alice,bob,carol]) {
     })
     it('has a carol', async () => {
         assert.equal(await splitter.recipient2(), carol)
+    })
+
+    it("won't allow 0 addresses", async () => {
+        await Splitter.new(0,0, { from: alice })
+            .should.be.rejectedWith("VM Exception while processing transaction: revert");
     })
 
     it('allows visibility of contract balance on web page',async () => {

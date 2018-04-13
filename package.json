@@ -1,0 +1,28 @@
+{
+  "name": "splitter",
+  "version": "1.0.0",
+  "description": "B9Labs course project",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/p14n/eth-splitter.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/p14n/eth-splitter/issues"
+  },
+  "homepage": "https://github.com/p14n/eth-splitter#readme"
+}
