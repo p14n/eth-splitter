@@ -3,9 +3,9 @@ pragma solidity ^0.4.17;
 contract Splitter {
 
   address public owner;
-  address public recipient1;
-  address public recipient2;
-  bool killed;
+  address[] private recipients = new address[](2);
+  bool private killed;
+  mapping (address => uint) private balances;
 
   function Splitter(
     address firstrecipient,
@@ -16,18 +16,46 @@ contract Splitter {
     require(secondrecipient > 0);
     require(firstrecipient != secondrecipient);
     killed = false;
-    recipient1 = firstrecipient;
-    recipient2 = secondrecipient;
+    balances[firstrecipient] = 0;
+    balances[secondrecipient] = 0;
+    recipients[0] = firstrecipient;
+    recipients[1] = secondrecipient;
   }
 
   function split() public payable {
+
     require(!killed);
     require(msg.sender == owner);
     require(msg.value % 2 == 0);
-    uint val = msg.value/2;
-    recipient1.transfer(val);
-    recipient2.transfer(val);
+
+    uint toPay = msg.value/2;
+
+    uint bal1 = balances[recipients[0]];
+    uint newBal1 = toPay + bal1;
+    assert(newBal1 > bal1);
+
+    uint bal2 = balances[recipients[1]];
+    uint newBal2 = toPay + bal2;
+    assert(newBal2 > bal2);
+
+    balances[recipients[0]] = newBal1;
+    balances[recipients[1]] = newBal2;
+
   }
+
+  function recipientBalance() view public returns(uint) {
+    return balances[msg.sender];
+  }
+
+  function withdraw() public {
+
+    uint balance = balances[msg.sender];
+    require(balance > 0);
+    balances[msg.sender] = 0;
+    msg.sender.transfer(balance);
+
+  }
+
   function() payable public {
     split();
   }
