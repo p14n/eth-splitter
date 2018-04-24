@@ -6,7 +6,7 @@ contract('Splitter', function ([alice,bob,carol]) {
 
     let splitter;
     beforeEach('setup contract for each test', async () => {
-        splitter = await Splitter.new(bob,carol, { from: alice })
+        splitter = await Splitter.new({ from: alice })
     })
 
     it('has an alice', async () => {
@@ -14,7 +14,9 @@ contract('Splitter', function ([alice,bob,carol]) {
     })
 
     it("won't allow 0 addresses", async () => {
-        await expectedExceptionPromise(() => Splitter.new(0,0, { from: alice }))
+
+        await expectedExceptionPromise( () => splitter.split(0,0, { from: alice, value: 10000 } ))
+
     })
 
     it('allows visibility of contract balance on web page',async () => {
@@ -29,7 +31,7 @@ contract('Splitter', function ([alice,bob,carol]) {
     })
 
     it('prevents alice sending an odd number',async () => {
-        await expectedExceptionPromise( () => splitter.split( { from: alice, value: 1 } ))
+        await expectedExceptionPromise( () => splitter.split(bob,carol,{ from: alice, value: 1 } ))
     })
 
     it('allows bob and carol to withdraw funds', async ()=>{
@@ -37,7 +39,7 @@ contract('Splitter', function ([alice,bob,carol]) {
         const toSplit = 100000;
         const b_balance = await web3.eth.getBalance(bob);
 
-        await splitter.split( { from: alice, value: toSplit } );
+        await splitter.split(bob,carol,{ from: alice, value: toSplit } );
         const tx = await splitter.withdraw({ from: bob});
 
         const b_new = await web3.eth.getBalance(bob);
@@ -51,7 +53,7 @@ contract('Splitter', function ([alice,bob,carol]) {
 
     it('has a kill switch',async () => {
         await splitter.kill( { from: alice } )
-        await expectedExceptionPromise(() =>splitter.split( { from: alice, value: 1 } ));
+        await expectedExceptionPromise(() =>splitter.split(bob,carol, { from: alice, value: 1 } ));
 
     })
 
