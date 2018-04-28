@@ -50,8 +50,8 @@ contract Splitter {
 
   }
 
-  function kill() public {
+  function toggleKill() public {
     require(msg.sender == owner);
-    killed = true;
+    killed = !killed;
   }
 }
