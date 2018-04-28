@@ -1,6 +1,10 @@
 pragma solidity ^0.4.17;
 
+import 'openzeppelin-solidity/contracts/math/SafeMath.sol';
+
 contract Splitter {
+
+  using SafeMath for uint256;
 
   address public owner;
 
@@ -24,16 +28,15 @@ contract Splitter {
     require(secondRecipient != 0);
     require(firstRecipient != secondRecipient);
 
-    uint toPay = msg.value/2;
+    uint toPay = msg.value.div(2);
     updateBalanceOfRecipient(toPay,firstRecipient);
     updateBalanceOfRecipient(toPay,secondRecipient);
-    SplitEvent(owner,toPay,firstRecipient,secondRecipient);
+    emit SplitEvent(owner,toPay,firstRecipient,secondRecipient);
   }
 
   function updateBalanceOfRecipient(uint toPay,address recipient) private {
     uint bal = balances[recipient];
-    uint newBal = toPay + bal;
-    assert(newBal > bal);
+    uint newBal = toPay.add(bal);
     balances[recipient] = newBal;
   }
 
@@ -42,7 +45,7 @@ contract Splitter {
     uint balance = balances[msg.sender];
     require(balance > 0);
     balances[msg.sender] = 0;
-    WithdrawEvent(balance,msg.sender);
+    emit WithdrawEvent(balance,msg.sender);
     msg.sender.transfer(balance);
 
   }
