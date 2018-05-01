@@ -52,7 +52,7 @@ contract('Splitter', function ([alice,bob,carol]) {
     })
 
     it('has a kill switch',async () => {
-        await splitter.toggleKill( { from: alice } )
+        await splitter.setKilled(true, { from: alice } )
         await expectedExceptionPromise(() =>splitter.split(bob,carol, { from: alice, value: 1 } ));
 
     })

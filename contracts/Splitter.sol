@@ -1,4 +1,4 @@
-pragma solidity ^0.4.17;
+pragma solidity ^0.4.21;
 
 import 'openzeppelin-solidity/contracts/math/SafeMath.sol';
 
@@ -11,10 +11,23 @@ contract Splitter {
   bool private killed;
   mapping (address => uint) private balances;
 
+  function isKilled() public view returns (bool){
+    return killed;
+  }
+
+  function getBalanceOwed() public view returns (uint) {
+    return balances[msg.sender];
+  }
+
+  function getBalance(address payee) public view returns (uint) {
+    return balances[payee];
+  }
+
   event SplitEvent(address indexed payer,uint amount,address indexed payee1,address indexed payee2);
   event WithdrawEvent(uint amount, address indexed payee);
+  event KilledStateEvent(bool isKilled);
 
-  function Splitter() public {
+  constructor() public {
     owner = msg.sender;
   }
 
@@ -22,7 +35,6 @@ contract Splitter {
                  address secondRecipient) public payable {
 
     require(!killed);
-    require(msg.sender == owner);
     require(msg.value % 2 == 0);
     require(firstRecipient != 0);
     require(secondRecipient != 0);
@@ -31,7 +43,7 @@ contract Splitter {
     uint toPay = msg.value.div(2);
     updateBalanceOfRecipient(toPay,firstRecipient);
     updateBalanceOfRecipient(toPay,secondRecipient);
-    emit SplitEvent(owner,toPay,firstRecipient,secondRecipient);
+    emit SplitEvent(msg.sender,toPay,firstRecipient,secondRecipient);
   }
 
   function updateBalanceOfRecipient(uint toPay,address recipient) private {
@@ -50,8 +62,9 @@ contract Splitter {
 
   }
 
-  function toggleKill() public {
+  function setKilled(bool _killed) public {
     require(msg.sender == owner);
-    killed = !killed;
+    killed = _killed;
+    emit KilledStateEvent(killed);
   }
 }
